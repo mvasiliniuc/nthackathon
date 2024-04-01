@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Webpage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="logo.jpg" alt="Logo" id="logo">
+    </header>
+    <div class="form-container">
+        <p class="form-label">Calling all developers! <span class="highlight">Unleash your creativity and ingenuity in our upcoming hackathon.</span>
+            <br/>Your ideas have the power to shape the future of technology. Let's collaborate, innovate, and push boundaries together.<br/> Don't miss this opportunity to showcase your skills and make a meaningful impact. <span class="highlight">Join us and let's hack the world!</span></p>
+        <form id="inputForm">
+            <!-- New input field for the contributor's name -->
+            <input type="text" id="contributorName" placeholder="Your Name" required>
+            <textarea id="userIdea" placeholder="Enter your idea here..." maxlength="500" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        
+          // Your web app's Firebase configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyAQ7B1gIKfaIp_vDsU0cLGX1RyEqDzjmkk",
+            authDomain: "hackathon-156b1.firebaseapp.com",
+            projectId: "hackathon-156b1",
+            storageBucket: "hackathon-156b1.appspot.com",
+            messagingSenderId: "664855328755",
+            appId: "1:664855328755:web:8a279ccd4003f0ff09c486"
+          };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Form submission handler
+        document.getElementById('inputForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const contributerName = document.getElementById('contributorName').value;
+            const idea = document.getElementById('userIdea').value;
+
+            try {
+                await addDoc(collection(db, "ideas"), {
+                    contributerName: contributerName,
+                    idea: idea,
+                    timestamp: serverTimestamp()
+                });
+                alert('Data submitted successfully!');
+                document.getElementById('inputForm').reset(); // Reset form
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert('Error submitting data. See console for details.');
+            }
+        });
+    </script>
+</body>
+</html>
