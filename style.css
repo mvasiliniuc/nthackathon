@@ -24,21 +24,39 @@ header {
 
 #logo {
     height: 50px;
+    position: absolute;
+    top: 0px;
+    left: 65px; /* Increased left position for added 'padding' */
 }
 
-.form-container {
-    padding-left: 60px; /* Tripled space from the left edge, under the logo */
-    padding-top: 100px; /* Adjusted to push the content below the logo */
-    width: calc(100% - 80px); /* Adjust width to account for increased padding */
-    max-width: 450px; /* Maintain max-width for larger screens */
+/* Style for the content wrapper */
+.content-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Arrange children side by side */
+    width: 100%;
+    min-height: 100vh; /* Ensure it covers the full viewport height */
+}
+
+/* Adjusted form-container styles for the left side */
+.form-container {
+    flex: 1; /* Allows the container to grow and fill the space */
+    padding: 90px 50px 50px 50px; /* Adjusted padding: top, right, bottom, left */
+    max-width: 40%; /* Limits the width to half of the parent */
+    box-sizing: border-box; /* Includes padding in the element's total width and height */
+}
+
+#inputForm {
+    padding-top: 8px; /* Adds 20px padding to the top of the form */
 }
 
 .form-label {
-    font-size: 1.2em; /* Double the font size */
-    font-family: 'Helvetica Neue Bold', Arial, sans-serif; /* Use Helvetica Neue Bold, with fallbacks */
-    color: white; /* Default text color */
+    font-size: 1.1em; /* Double the font size */
+    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
+    color: white;
+}
+
+.inputForm {
+    padding-top: 8px;
 }
 
 .highlight {
@@ -46,15 +64,25 @@ header {
 }
 
 input[type="text"], textarea, button {
-    width: 100%;
+    width: 50%;
     padding: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-size: 16px;
     background-color: transparent;
     border: 2px solid white;
     border-radius: 20px; /* Increased border-radius for a rounded appearance */
     color: white; /* Text color */
     resize: none; /* Prevent textarea resizing */
+}
+
+input[type="text"], textarea {
+    font-style: italic; /* Makes placeholder text italic */
+}
+
+/* Style for textarea placeholder */
+textarea::placeholder {
+    font-style: italic; /* Makes placeholder text italic */
+    color: rgb(47, 212, 198); /* Ensures the placeholder text color matches your design */
 }
 
 button {
@@ -86,8 +114,7 @@ input[type="text"]::placeholder, textarea::placeholder {
 
 /* Adjust the textarea height */
 textarea {
-    height: calc(125px); /* Increase height by 50px */
-    /* Retain existing styles */
+    height: calc(100px);
     width: 100%;
     padding: 15px;
     margin-bottom: 20px;
@@ -99,15 +126,110 @@ textarea {
     resize: none;
 }
 
-.card {
+.idea-list-container {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 50px 50px 150px 50px; /* Adjusted padding: top, right, bottom, left */
+    gap: 20px;
+    max-width: 60%;
+    box-sizing: border-box;
+    height: 100vh;
+    justify-content: center;
+    overflow-y: auto; /* Scrollable if content exceeds viewport */
+        /* Hide scrollbar for WebKit browsers */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+}
+
+/* Styles for the idea-card-wrapper */
+.idea-card-wrapper {
+    position: relative;
+    flex: 0 1 calc(33.33% - 40px); /* Adjust this calculation if necessary to account for margin */
+    height: 100px; /* Initial card height */
+    margin: 10px; /* Adds spacing around each card */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+.idea-card {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0; top: 0;
+    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
     background-color: white;
     color: black;
     border: 2px solid rgb(47, 212, 198);
     border-radius: 10px;
-    padding: 20px;
-    width: 200px; /* Adjust width as needed */
+    padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    overflow: hidden; /* Keep content within the card initially */
+    text-align: left;
+    transition: all 0.3s ease;
+    z-index: 1; /* Ensure card layers correctly within the stack */
+}
+
+.idea-card:hover {
+    transform: scale(1.05); /* Scales the card up by 5% */
+    z-index: 2; /* Elevate the card on hover */
+    width: 200%; /* Increase width */
+    height: 170%; /* Increase height */
+    transform-origin: center center;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow for a "lifted" effect */
+}
+
+.idea-card:hover p {
+    /* Remove line clamping on hover to allow text to expand */
+    -webkit-line-clamp: none;
+    display: block;
+    overflow: hideen; /* Ensure overflow text is visible */
+    height: auto; /* Let height adjust based on content */
+}
+
+.idea-card p {
+    -webkit-line-clamp: 3; /* Clamp text to 3 lines by default */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    height: 3.6em; /* Set height to enforce line clamp */
+}
+
+footer {
+    font-size: 0.9em; /* Double the font size */
+    background-color: rgb(47, 212, 198);
+    color: white;
+    font-weight: bold;
+    font-family: 'Helvetica Neue Bold', Arial, sans-serif; /* Adjust as per your site's font */
+    text-align: left;
+    padding: 20px; /* Add padding for spacing */
+    width: 100%;
+    /* Fix the footer to the bottom */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1; /* Ensure card layers correctly within the stack */
+}
+
+#successMessage {
+    position: fixed; /* Overlay on the page */
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(47, 212, 198, 0.9); /* Semi-transparent background */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    z-index: 1000; /* Ensure it's on top */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em; /* Double the font size */
+    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
 }

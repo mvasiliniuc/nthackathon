@@ -10,33 +10,36 @@
     <header>
         <img src="logo.jpg" alt="Logo" id="logo">
     </header>
-    <div class="form-container">
-        <p class="form-label">Calling all developers! <span class="highlight">Unleash your creativity and ingenuity in our upcoming hackathon.</span>
-            <br/>Your ideas have the power to shape the future of technology. Let's collaborate, innovate, and push boundaries together.<br/> Don't miss this opportunity to showcase your skills and make a meaningful impact. <span class="highlight">Join us and let's hack the world!</span></p>
-        <form id="inputForm">
-            <!-- New input field for the contributor's name -->
-            <input type="text" id="contributorName" placeholder="Your Name" required>
-            <textarea id="userIdea" placeholder="Enter your idea here..." maxlength="500" required></textarea>
-            <button type="submit">Submit</button>
-        </form>
+    <div class="content-wrapper">
+        <div class="form-container">
+            <p class="form-label">Calling all developers! <span class="highlight">Unleash your creativity and ingenuity in our upcoming hackathon.</span>
+            <br/><br/>Your ideas have the power to shape the future of technology. Let's collaborate, innovate, <span class="highlight">and push boundaries together.</span><br/><br/> Don't miss this opportunity to showcase your skills and make a meaningful impact. <span class="highlight">Join us and let's hack the world!</span></p>
+            <form id="inputForm">
+                <!-- New input field for the contributor's name -->
+                <input type="text" id="contributorName" placeholder="Your Name" required>
+                <textarea id="userIdea" placeholder="Enter your idea here..." maxlength="450" required></textarea>
+                <button type="submit">Submit Idea</button>
+                <button type="button" id="participateOnly">I only want to participate</button>
+            </form>
+        </div>
+        <div class="idea-list-container">
+            <!-- Idea cards will be dynamically added here -->
+        </div>
     </div>
+    <div id="successMessage" style="display:none;">
+    </div>
+    <footer>
+    This 'simplistic' website was done in a couple of hours by a colleague of yours which is not familiar with web frontend. Imagine what you could do in 24 hours together with a team !!! <br/> If you prefer to fill in your ideas in our corresponding excel sheet, you are welcomed to do it <a href="#" style="color: white; font-weight: bold; text-decoration: underline;">here</a>.
+</footer>
     <!-- Firebase SDK -->
+    <script src="script.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
         
-          // Your web app's Firebase configuration
-          const firebaseConfig = {
-            apiKey: "AIzaSyAQ7B1gIKfaIp_vDsU0cLGX1RyEqDzjmkk",
-            authDomain: "hackathon-156b1.firebaseapp.com",
-            projectId: "hackathon-156b1",
-            storageBucket: "hackathon-156b1.appspot.com",
-            messagingSenderId: "664855328755",
-            appId: "1:664855328755:web:8a279ccd4003f0ff09c486"
-          };
+    import { getFirestore, collection, query, orderBy, onSnapshot, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -55,13 +58,99 @@
                     idea: idea,
                     timestamp: serverTimestamp()
                 });
-                alert('Data submitted successfully!');
+                console.error('Data submitted successfully!');
                 document.getElementById('inputForm').reset(); // Reset form
             } catch (error) {
                 console.error("Error adding document: ", error);
                 alert('Error submitting data. See console for details.');
             }
         });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const ideas = [
+        "A browser plugin that integrates an AI-driven system utilizing natural language processing to align resumes with ongoing or future projects within a team.",
+        "Fridge Feast: A program leveraging AI to suggest recipes based on your current fridge inventory, making meal planning easy and waste-free.",
+        "SunSpotter: A real-time app that tracks the sun's position, weather conditions, and urban shading in a city, helping you find the perfect sunny spot anytime."
+    ];
+
+    function selectRandomIdea() {
+        let lastSelectedIndex = parseInt(localStorage.getItem('lastSelectedIndex'), 10); // Retrieve and parse the last selected index from localStorage
+        let selectedIndex;
+        do {
+            selectedIndex = Math.floor(Math.random() * ideas.length);
+        } while (selectedIndex === lastSelectedIndex); // Ensure the new selection is different from the last
+        
+        localStorage.setItem('lastSelectedIndex', selectedIndex); // Update localStorage with the new last selected index
+
+        return ideas[selectedIndex];
+    }
+
+    function updatePlaceholder() {
+        const selectedIdea = selectRandomIdea();
+        const finalPlaceholder = `Enter your idea here... something like... "${selectedIdea}"`;
+        document.getElementById('userIdea').placeholder = finalPlaceholder;
+    }
+
+    updatePlaceholder(); // Update placeholder on page load
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Assuming the initialization of Firestore and other setup remains the same
+
+    const ideaListContainer = document.querySelector('.idea-list-container'); // Use the class for the container
+
+    const q = query(collection(db, "ideas"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+        ideaListContainer.innerHTML = ''; // Clear the list container
+        snapshot.forEach((doc) => {
+            const idea = doc.data();
+
+            // Create the wrapper div for each idea card
+            const ideaCardWrapper = document.createElement('div');
+            ideaCardWrapper.className = 'idea-card-wrapper';
+
+            // Create the idea card div
+            const ideaCard = document.createElement('div');
+            ideaCard.className = 'idea-card';
+            ideaCard.innerHTML = `<strong>${idea.contributerName}</strong><p>${idea.idea}</p>`;
+
+            // Append the idea card to its wrapper
+            ideaCardWrapper.appendChild(ideaCard);
+
+            // Finally, append the wrapper (with the idea card inside) to the list container
+            ideaListContainer.appendChild(ideaCardWrapper);
+        });
+    });
+});
+document.getElementById('participateOnly').addEventListener('click', async () => {
+    const contributerName = document.getElementById('contributorName').value;
+
+    if (contributerName.trim() !== '') {
+        try {
+            await addDoc(collection(db, "participants"), {
+                contributerName: contributerName,
+                timestamp: serverTimestamp()
+            });
+            console.log('Participant added successfully!');
+            document.getElementById('inputForm').reset(); // Reset the entire form
+            // Display the success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            successMessage.textContent = `You, dear ${contributerName}, are IN the hackathon. You will be summoned!`; // Dynamic message
+
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+
+        } catch (error) {
+            console.error("Error adding document to participants: ", error);
+            alert('Error submitting participation. See console for details.');
+        }
+    } else {
+        alert('Please enter your name to participate.');
+    }
+});
     </script>
 </body>
 </html>
