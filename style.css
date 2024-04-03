@@ -51,7 +51,7 @@ header {
 
 .form-label {
     font-size: 1.1em; /* Double the font size */
-    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     color: white;
 }
 
@@ -83,6 +83,11 @@ input[type="text"], textarea {
 textarea::placeholder {
     font-style: italic; /* Makes placeholder text italic */
     color: rgb(47, 212, 198); /* Ensures the placeholder text color matches your design */
+}
+
+/* Target the specific class */
+.submit-button {
+    margin-right: 10px;
 }
 
 button {
@@ -161,7 +166,7 @@ textarea {
     height: 100%;
     position: absolute;
     left: 0; top: 0;
-    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: white;
     color: black;
     border: 2px solid rgb(47, 212, 198);
@@ -206,7 +211,7 @@ footer {
     background-color: rgb(47, 212, 198);
     color: white;
     font-weight: bold;
-    font-family: 'Helvetica Neue Bold', Arial, sans-serif; /* Adjust as per your site's font */
+    font-family: 'Arial', sans-serif; /* Adjust as per your site's font */
     text-align: left;
     padding: 20px; /* Add padding for spacing */
     width: 100%;
@@ -231,5 +236,5 @@ footer {
     text-align: center;
     font-weight: bold;
     font-size: 1.1em; /* Double the font size */
-    font-family: 'Helvetica Neue Bold', Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
 }
